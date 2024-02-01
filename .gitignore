@@ -6,12 +6,17 @@ node_modules
 /public/build/
 /public/_dev
 /app/public/build
-/prisma/dev.sqlite
-/prisma/dev.sqlite-journal
 database.sqlite
+
+/functions/\[\[path\]\].js
+/functions/\[\[path\]\].js.map
+/functions/metafile.*
+/functions/version.txt
 
 .env
 package-lock.json
 yarn.lock
 shopify.app.toml
 shopify.app.*.toml
+.dev.vars
+.wrangler

@@ -1,58 +1,46 @@
-import { PassThrough } from "stream";
-import { renderToPipeableStream } from "react-dom/server";
-import { RemixServer } from "@remix-run/react";
-import {
-  createReadableStreamFromReadable,
-  type EntryContext,
-} from "@remix-run/node";
-import { isbot } from "isbot";
-import { addDocumentResponseHeaders } from "./shopify.server";
+/**
+ * By default, Remix will handle generating the HTTP Response for you.
+ * You are free to delete this file if you'd like to, but if you ever want it revealed again, you can run `npx remix reveal` ✨
+ * For more information, see https://remix.run/file-conventions/entry.server
+ */
 
-const ABORT_DELAY = 5000;
+import type { AppLoadContext, EntryContext } from '@remix-run/cloudflare'
+import { RemixServer } from '@remix-run/react'
+import { isbot } from 'isbot'
+import { renderToReadableStream } from 'react-dom/server'
 
-export default async function handleRequest(
+export default async function handleRequest (
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  remixContext: EntryContext
+  remixContext: EntryContext,
+  // This is ignored so we can keep it in the template for visibility.  Feel
+  // free to delete this parameter in your app if you're not using it!
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  loadContext: AppLoadContext,
 ) {
-  addDocumentResponseHeaders(request, responseHeaders);
-  const userAgent = request.headers.get("user-agent");
-  const callbackName = isbot(userAgent ?? '')
-    ? "onAllReady"
-    : "onShellReady";
+  loadContext.shopify.addDocumentResponseHeaders(request, responseHeaders)
 
-  return new Promise((resolve, reject) => {
-    const { pipe, abort } = renderToPipeableStream(
-      <RemixServer
-        context={remixContext}
-        url={request.url}
-        abortDelay={ABORT_DELAY}
-      />,
-      {
-        [callbackName]: () => {
-          const body = new PassThrough();
-          const stream = createReadableStreamFromReadable(body);
+  const body = await renderToReadableStream(
+    <RemixServer context={remixContext} url={request.url} />,
+    {
+      signal: request.signal,
+      onError (error: unknown) {
+        // Log streaming rendering errors from inside the shell
+        console.error(error)
+        responseStatusCode = 500
+      },
+    },
+  )
 
-          responseHeaders.set("Content-Type", "text/html");
-          resolve(
-            new Response(stream, {
-              headers: responseHeaders,
-              status: responseStatusCode,
-            })
-          );
-          pipe(body);
-        },
-        onShellError(error) {
-          reject(error);
-        },
-        onError(error) {
-          responseStatusCode = 500;
-          console.error(error);
-        },
-      }
-    );
+  if (isbot(request.headers.get('user-agent') || '')) {
+    await body.allReady
+  }
 
-    setTimeout(abort, ABORT_DELAY);
-  });
+  responseHeaders.set('Content-Type', 'text/html')
+
+  return new Response(body, {
+    headers: responseHeaders,
+    status: responseStatusCode,
+  })
 }

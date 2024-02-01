@@ -1,18 +1,19 @@
 {
   "name": "test-new-auth",
   "private": true,
+  "sideEffects": false,
+  "type": "module",
   "scripts": {
     "build": "tsc && remix build",
-    "predev": "prisma generate && prisma migrate deploy",
     "dev": "shopify app dev",
     "config:link": "shopify app config link",
     "generate": "shopify app generate",
     "deploy": "shopify app deploy",
+    "pages:deploy": "npm run build && wrangler pages deploy ./public",
     "config:use": "shopify app config use",
     "env": "shopify app env",
-    "start": "remix-serve build/index.js",
+    "start": "wrangler pages dev ./public --compatibility-flags=nodejs_compat --live-reload --kv=KV",
     "docker-start": "npm run setup && npm run start",
-    "setup": "prisma generate && prisma migrate deploy",
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "shopify": "shopify",
     "prisma": "prisma",
@@ -20,6 +21,8 @@
   },
   "dependencies": {
     "@prisma/client": "^5.8.0",
+    "@remix-run/cloudflare": "^2.5.1",
+    "@remix-run/cloudflare-pages": "^2.5.1",
     "@remix-run/dev": "^2.0.0",
     "@remix-run/node": "^2.0.0",
     "@remix-run/react": "^2.0.0",
@@ -29,6 +32,7 @@
     "@shopify/polaris": "^12.0.0",
     "@shopify/shopify-api": "^9.0.2",
     "@shopify/shopify-app-remix": "^2.4.0",
+    "@shopify/shopify-app-session-storage-kv": "^2.0.4",
     "@shopify/shopify-app-session-storage-prisma": "^3.0.0",
     "isbot": "^4.1.0",
     "prisma": "^5.8.0",
@@ -36,6 +40,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240129.0",
     "@remix-run/eslint-config": "^2.0.0",
     "@shopify/api-codegen-preset": "^0.0.1",
     "@shopify/app-bridge-types": "^0.0.5",
@@ -46,7 +51,8 @@
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^9.1.0",
     "prettier": "^3.2.4",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "wrangler": "^3.26.0"
   },
   "workspaces": [
     "extensions/*"
@@ -54,5 +60,8 @@
   "trustedDependencies": [
     "@shopify/plugin-cloudflare"
   ],
-  "author": "dangamble"
+  "author": "dangamble",
+  "engines": {
+    "node": ">=18.0.0"
+  }
 }

@@ -1,9 +1,7 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { authenticate } from "../shopify.server";
-import db from "../db.server";
 
-export const action = async ({ request }: ActionFunctionArgs) => {
-  const { topic, shop, session, admin, payload } = await authenticate.webhook(
+export const action = async ({ context, request }: ActionFunctionArgs) => {
+  const { topic, shop, session, admin } = await context.shopify.authenticate.webhook(
     request
   );
 
@@ -15,7 +13,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   switch (topic) {
     case "APP_UNINSTALLED":
       if (session) {
-        await db.session.deleteMany({ where: { shop } });
+        // await db.session.deleteMany({ where: { shop } });
       }
 
       break;

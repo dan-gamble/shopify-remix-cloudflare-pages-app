@@ -1,19 +1,19 @@
 {
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["cloudflare.env.d.ts", "remix.env.d.ts", "**/*.ts", "**/*.tsx"],
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ES2019"],
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "strict": true,
     "skipLibCheck": true,
     "isolatedModules": true,
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "removeComments": false,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "allowJs": true,
     "jsx": "react-jsx",
-    "module": "Node16",
-    "moduleResolution": "Node16",
-    "target": "ES2019",
+    "moduleResolution": "Bundler",
+    "target": "ES2022",
     "baseUrl": ".",
     "paths": {
       "~/*": ["./app/*"]
