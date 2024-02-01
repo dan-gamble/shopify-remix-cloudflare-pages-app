@@ -1,6 +1,6 @@
 /// <reference types="@cloudflare/workers-types" />
 
-import type { createShopifyApp } from '~/shopify.server'
+import type { createShopifyApp } from '~/utils/shopify.server'
 
 interface Env {
   KV: KVNamespace;

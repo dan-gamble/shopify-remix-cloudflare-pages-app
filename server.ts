@@ -1,7 +1,7 @@
 import { logDevReady } from '@remix-run/cloudflare'
 import { createPagesFunctionHandler } from '@remix-run/cloudflare-pages'
 import * as build from '@remix-run/dev/server-build'
-import { createShopifyApp } from '~/shopify.server'
+import { createShopifyApp } from '~/utils/shopify.server'
 import type { Context } from './cloudflare.env'
 
 if (process.env.NODE_ENV === 'development') {

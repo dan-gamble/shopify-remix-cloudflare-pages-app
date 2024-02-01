@@ -6,7 +6,7 @@ import {
 } from "@shopify/shopify-app-remix/server";
 import { restResources } from "@shopify/shopify-api/rest/admin/2024-01";
 import { KVSessionStorage } from '@shopify/shopify-app-session-storage-kv'
-import type { Env } from '../cloudflare.env'
+import type { Env } from '../../cloudflare.env'
 
 export function createShopifyApp (env: Env) {
   const shopify = shopifyApp({
